@@ -1,32 +1,40 @@
 fun main () {
-    val opcoes = listOf("Pedra", "Papel", "Tesoura")
-
     println("--- DESAFIO: PEDRA, PAPEL E TESOURA ---")
-    println("Digite a sua escolha: ")
+    println("Digite 'Sair' a qualquer momento para encerrar")
 
-    //Lê a entrada do usuário e garante que a primeira letra seja maiúscula
-    val jogadaUsuario = readln().replaceFirstChar { it.uppercase() }
+    val opcoes = listOf("Pedra", "Papel", "Tesoura", "Sair")
+    var continuarJogando = true // Uma variável que controla se o jogo deve continuar
 
-    //O Computador sorteia um item da lista
-    val jogadaComputador = opcoes.random()
+    while (continuarJogando) {
+        print("\nSua Jogada: ")
+        val entrada = readln()
 
-    // Verificamos se a jogada do usuário é válida
-    if (jogadaUsuario !in opcoes) {
-        println("Jogada inválida! Escolha entre Pedra, Papel ou Tesoura.")
-    } else {
-        println("Você: $jogadaUsuario Vs $jogadaComputador")
+        //Verificamos primeiro se o usuário quer sair
+        if (entrada.lowercase() == "sair") {
+            continuarJogando = false
+            println("Obrigado por jogar! até a próxima.")
+        } else {
+            //Ajustamos a entrada para comparar com a lista (Ex: "pedra" vira "Pedra")
+            val jogadaUsuario = entrada.lowercase().replaceFirstChar {it.uppercase()}
 
-        //Início da Lógica de resultado
-        if (jogadaUsuario == jogadaComputador) {
-            println("Resultado: Empate!")
-        }
-        else if ((jogadaUsuario == "Pedra" && jogadaComputador == "Tesoura") ||
-                (jogadaUsuario == "Papel" && jogadaComputador == "Pedra") ||
-                (jogadaUsuario == "Tesoura" && jogadaComputador == "Papel")) {
-            println("RESULTADO: Parabéns, você venceu! 🎉")
-        }
-        else {
-            println("RESULTADO: Não foi dessa vez, o computador venceu.")
+            //Verificamos se a jogada do usuário é válida
+            if (jogadaUsuario !in opcoes) {
+                println("Jogada inválida! Tente: Pedra, Papel, Tesoura ou Sair.")
+            } else {
+                val jogadaComputador = opcoes.random()
+                    println("O Computador escolheu $jogadaComputador 🤖")
+
+                //Início da Lógica de resultado
+                if (jogadaUsuario == jogadaComputador) {
+                    println("Resultado: Empate!")
+                } else if ((jogadaUsuario == "Pedra" && jogadaComputador == "Tesoura") ||
+                    (jogadaUsuario == "Papel" && jogadaComputador == "Pedra") ||
+                    (jogadaUsuario == "Tesoura" && jogadaComputador == "Papel")) {
+                    println("Parabéns, você venceu! 🎉")
+                } else {
+                    println("Não foi dessa vez, o computador venceu. 🤖")
+                }
+            }
         }
     }
 }
