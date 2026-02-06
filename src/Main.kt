@@ -1,62 +1,85 @@
 fun main () {
 
-    val opcoes = listOf("Pedra", "Papel", "Tesoura")
-    var continuarJogando = true // Uma variável que controla se o jogo deve continuar
-
-    // O PLACAR
-    var placarUsuario = 0
-    var placarComputador = 0
+    // VARIÁVEIS DE ESTADO
+    val options = listOf("Pedra", "Papel", "Tesoura")
+    val playerHistory = mutableListOf<String>()
+    var continuePlaying = true // Uma variável que controla se o jogo deve continuar
+    var playerScore = 0
+    var pcScore = 0
 
     println("--- DESAFIO: PEDRA, PAPEL E TESOURA. ---")
     println("Digite 'Sair' para encerrar")
 
-    while (continuarJogando) {
+    while (continuePlaying) {
         print("\nSua Jogada: ")
         val entrada = readln()
 
-        // Verificamos se quer sair
         if (entrada.lowercase() == "sair") {
-            continuarJogando = false
+            continuePlaying = false
         } else {
             // Tratamento da entrada
-            val jogadaUsuario = entrada.lowercase().replaceFirstChar {it.uppercase()}
+            val playerOption = entrada.lowercase().replaceFirstChar {it.uppercase()}
 
             // Validação
-            if (jogadaUsuario !in opcoes) {
+            if (playerOption !in options) {
                 println("Jogada inválida! Tente: Pedra, Papel, Tesoura ou Sair.")
             } else {
-                val jogadaComputador = opcoes.random()
-                    println("O Computador escolheu $jogadaComputador 🤖")
+                // Guardar na memória
+                // Adiciona a escolha do jogador no histórico
+                playerHistory.add(playerOption)
 
-                // Lógica de resultado
+                //O Cérebro da IA
+                val pcOption = if (playerHistory.size < 3) {
+                    //Se tiver menos de 3 jogadas, ele ainda não tem dados suficientes
+                    // Então joga aleatoriamente para sondar o Jogador
+                    options.random()
+                } else {
+                    // Contamos o que você jogou mais até agora
+                    val qtdPedra = playerHistory.count{ it == "Pedra" }
+                    val qtdPapel = playerHistory.count{ it == "Papel" }
+                    val qtdTesoura = playerHistory.count{ it == "Tesoura" }
+
+                    println("\n(Oponente pensando: Você jogou Pedra $qtdPedra vezes, Papel $qtdPapel vezes, Tesoura $qtdTesoura vezes...)\n")
+
+                    // Lógica de Contra-ataque
                     when {
-                        jogadaUsuario == jogadaComputador -> {
-                            println("Resultado: Empate!")
-                        }
-                        (jogadaUsuario == "Pedra" && jogadaComputador == "Tesoura") ||
-                        (jogadaUsuario == "Papel" && jogadaComputador == "Pedra") ||
-                        (jogadaUsuario == "Tesoura" && jogadaComputador == "Papel") -> {
-                        println("Parabéns, você venceu! 🎉")
-                        placarUsuario++ // Atualiza o placar do Jogador
-
-                    }
-                    else -> {
-                        println("Não foi dessa vez, o computador venceu. 🤖")
-                        placarComputador++ // Atualiza o placar do Computador
+                        (qtdPedra > qtdPapel && qtdPedra > qtdTesoura) -> {"Papel"}
+                        (qtdPapel > qtdPedra && qtdPapel > qtdTesoura) -> {"Tesoura"}
+                        (qtdTesoura > qtdPedra && qtdTesoura > qtdPapel) -> {"Pedra"}
+                        else -> {options.random()}
                     }
                 }
-                println(">>> PLACAR ATUAL: Você $placarUsuario x $placarComputador Computador <<<")
+
+                println("A IA escolheu $pcOption 🤖")
+
+                // Lógica de resultado
+                when {
+                    playerOption == pcOption -> {
+                        println("Resultado: Empate!")
+                    }
+                    (playerOption == "Pedra" && pcOption == "Tesoura") ||
+                    (playerOption == "Papel" && pcOption == "Pedra") ||
+                    (playerOption == "Tesoura" && pcOption == "Papel") -> {
+                        println("Parabéns, você venceu! 🎉")
+                        playerScore++ // Atualiza o placar do Jogador
+                    }
+                    else -> {
+                        println("Não foi dessa vez, a IA venceu. 🤖")
+                        pcScore++ // Atualiza o placar da IA
+                    }
+                }
+                println(">>> PLACAR ATUAL: Você $playerScore x $pcScore IA <<<")
             }
         }
     }
     // Pós-jogo: Resultado final
     println("\n=== FIM DE JOGO ===")
-    println("Placar Final: Você $placarUsuario x $placarComputador Computador")
+    println("Placar Final: Você $playerScore x $pcScore IA")
 
     // Lógica do grande campeão
     when {
-        placarUsuario > placarComputador -> println("🏆 Parabéns, você é o grande campeão!")
-        placarUsuario < placarComputador -> println("🤖 O computador levou a melhor hoje. Tente novamente!")
+        playerScore > pcScore -> println("🏆 Parabéns, você é o grande campeão!")
+        playerScore < pcScore -> println("🤖 A IA levou a melhor hoje. Tente novamente!")
         else -> println("Foi uma disputa acirrada. Terminou empatado!")
     }
 }
